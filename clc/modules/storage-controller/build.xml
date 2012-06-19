@@ -74,7 +74,7 @@
 		<antcall target="build-java" />
     <antcall target="jar" />
 		<mkdir dir="include" />
-		<javah classpath="${build.dir}" destdir="include" force="yes">
+		<javah classpath="${build.dir}:${modules.dir}/core/build:${modules.dir}/msgs/build:/usr/share/java/groovy.jar" destdir="include" force="yes">
 			<class name="com.eucalyptus.storage.OverlayManager" />
 			<class name="com.eucalyptus.storage.AOEManager" />
 		</javah>
