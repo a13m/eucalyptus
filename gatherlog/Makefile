@@ -24,11 +24,11 @@ generated/stubs: $(GLWSDL)
 	rm -rf generated
 	mkdir -p generated
 	@echo Generating client stubs
-	sh $(WSDL2C) -uri $(GLWSDL) -g -d adb -u -uw -f -o generated | grep -v 'the classpath'
+	sh $(WSDL2C) -uri $(GLWSDL) -g -d adb -u -f -o generated
 	@echo Generating server stubs
-	sh $(WSDL2C) -uri $(GLWSDL) -sd -ss -d adb -u -uw -f -o generated | grep -v 'the classpath'
+	sh $(WSDL2C) -uri $(GLWSDL) -sd -ss -d adb -u -f -o generated
 	@echo Adding marshalling calls to server stubs
-	../tools/add_marshalling.pl generated/axis2_skel_*.c
+	@ ../tools/add_marshalling.pl generated/axis2_skel_*.c
 	@cp ../tools/Makefile.gen generated/Makefile
 	@echo "this is a cute little makefile marker" >generated/stubs
 	@echo Stubs generated.
@@ -44,7 +44,7 @@ $(SERVICE_SO): generated/stubs $(GENERATEDOBJS) gl-client-marshal-adb.o server-m
 client: $(CLIENT)
 
 $(CLIENT): generated/stubs $(CLIENT).c gl-client-marshal-adb.c handlers.o
-	$(CC) -o $(CLIENT) $(CFLAGS) $(INCLUDES) $(CLIENT).c gl-client-marshal-adb.c generated/adb_*.o generated/axis2_stub_*.o ../util/misc.o ../storage/diskutil.o ../util/ipc.o ../util/euca_auth.o -DMODE=1 $(LIBS) $(LDFLAGS) -lssl -lcrypto
+	$(CC) -o $(CLIENT) $(CFLAGS) $(INCLUDES) $(CLIENT).c gl-client-marshal-adb.c generated/adb_*.o generated/axis2_stub_*.o generated/axis2_ext*.o ../util/misc.o ../storage/diskutil.o ../util/ipc.o ../util/euca_auth.o -DMODE=1 $(LIBS) $(LDFLAGS) -lssl -lcrypto
 
 deploy:
 	$(INSTALL) -d $(DESTDIR)$(AXIS2C_SERVICES)/$(SERVICE_NAME)/

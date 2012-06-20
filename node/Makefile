@@ -34,12 +34,12 @@ generated/stubs: $(NCWSDL)
 	@echo Generating server stubs
 	rm -rf generated
 	mkdir -p generated
-	sh $(WSDL2C) -uri $(NCWSDL) -sd -ss -d adb -u -uw -f -o generated | grep -v 'the classpath'
+	sh $(WSDL2C) -uri $(NCWSDL) -sd -ss -d adb -u -f -o generated | grep -v 'the classpath'
 	@echo Adding marshalling calls to server stubs
 #	../tools/add_marshalling.pl generated/axis2_skel_*.c generated/axis2_svc_skel_*.c
 	../tools/add_marshalling.pl generated/axis2_skel_*.c 
 	@echo Generating client stubs
-	sh $(WSDL2C) -uri $(NCWSDL) -g -d adb -u -uw -f -o generated | grep -v 'the classpath'
+	sh $(WSDL2C) -uri $(NCWSDL) -g -d adb -u -f -o generated | grep -v 'the classpath'
 #	@echo Compiling the stubs
 	cd generated; patch -p1 < ../axis2_svc_generated.patch; cd ../
 	@cp ../tools/Makefile.gen generated/Makefile
@@ -98,7 +98,7 @@ client: $(CLIENT) $(CLIENT)_local
 fake: $(CLIENT)_fake
 
 $(CLIENT): generated/stubs $(STORAGE_OBJS) ../util/misc.o ../util/data.o client-marshal-adb.o client-marshal-local.o $(CLIENT).c ../storage/vbr.o
-	$(CC) -o $(CLIENT) $(CFLAGS) $(INCLUDES) $(NC_LIBS) generated/adb_*.o generated/axis2_stub_*.o $(AXIOM_LIBS) client-marshal-adb.o ../util/*.o $(AXIOM_LIBS) $(OPENSSL_LIBS) ../storage/diskutil.o ../net/*.o -lm $(CLIENT).c ../storage/http.o -lcurl ../storage/storage-windows.o
+	$(CC) -o $(CLIENT) $(CFLAGS) $(INCLUDES) $(NC_LIBS) generated/adb_*.o generated/axis2_stub_*.o generated/axis2_ext*.o $(AXIOM_LIBS) client-marshal-adb.o ../util/*.o $(AXIOM_LIBS) $(OPENSSL_LIBS) ../storage/diskutil.o ../net/*.o -lm $(CLIENT).c ../storage/http.o -lcurl ../storage/storage-windows.o
 
 $(CLIENT)_fake: generated/stubs $(STORAGE_OBJS) ../util/misc.o ../util/data.o client-marshal-adb.o client-marshal-local.o client-marshal-fake.o $(CLIENT).c ../storage/vbr.o
 
